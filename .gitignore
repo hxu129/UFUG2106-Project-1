@@ -1,6 +1,9 @@
 # Data directories
 data_preprocess/data/
 
+# All png files
+*.png
+
 # Python cache
 __pycache__/
 *.pyc
