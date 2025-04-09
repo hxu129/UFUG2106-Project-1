@@ -39,7 +39,7 @@ class TfidfProcessor(TextPreprocessor):
     def __init__(self, max_features: Optional[int] = None, **kwargs):
         super().__init__(**kwargs)
         self.vectorizer = TfidfVectorizer(
-            lowercase=self.lowercase,
+            lowercase=False,
             max_features=max_features
         )
         self.is_fitted = False
@@ -64,7 +64,7 @@ class HashingProcessor(TextPreprocessor):
         super().__init__(**kwargs)
         self.vectorizer = HashingVectorizer(
             n_features=n_features,
-            lowercase=self.lowercase
+            lowercase=False
         )
         
     def transform(self, texts: List[str]) -> np.ndarray:
@@ -78,10 +78,35 @@ class DataPreprocessor:
     def __init__(self, 
                  kgram_k: int = 3,
                  tfidf_max_features: Optional[int] = None,
-                 hashing_n_features: int = 1024):
-        self.kgram_generator = KGramGenerator(k=kgram_k)
-        self.tfidf_processor = TfidfProcessor(max_features=tfidf_max_features)
-        self.hashing_processor = HashingProcessor(n_features=hashing_n_features)
+                 hashing_n_features: int = 1024,
+                 lowercase: bool = True,
+                 remove_punctuation: bool = True):
+        """Initialize the data preprocessor with configuration for all representation methods
+        
+        Args:
+            kgram_k: Length of character k-grams for MinHash (default: 3)
+            tfidf_max_features: Maximum features for TF-IDF vectorizer (default: None = unlimited)
+            hashing_n_features: Number of features for HashingVectorizer (default: 1024)
+            lowercase: Whether to convert text to lowercase (default: True)
+            remove_punctuation: Whether to remove punctuation (default: True)
+        """
+        self.kgram_generator = KGramGenerator(
+            k=kgram_k, 
+            lowercase=lowercase,
+            remove_punctuation=remove_punctuation
+        )
+        
+        self.tfidf_processor = TfidfProcessor(
+            max_features=tfidf_max_features,
+            lowercase=lowercase,
+            remove_punctuation=remove_punctuation
+        )
+        
+        self.hashing_processor = HashingProcessor(
+            n_features=hashing_n_features,
+            lowercase=lowercase,
+            remove_punctuation=remove_punctuation
+        )
         
     def prepare_for_minhash(self, texts: List[str]) -> List[Set[str]]:
         """Prepare texts for MinHash by generating k-grams"""

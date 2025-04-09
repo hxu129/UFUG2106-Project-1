@@ -1,8 +1,5 @@
 # Data directories
-data_preprocess/wiki40b_data/raw/
-data_preprocess/wiki40b_data/cache/
-data_preprocess/wiki40b_data/processed/
-data_preprocess/test_data/
+data_preprocess/data/
 
 # Python cache
 __pycache__/
